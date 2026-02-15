@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -495,6 +496,31 @@ fun GrammarCard(grammar: GrammarPoint) {
             Text(grammar.title, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(4.dp))
             Text(grammar.content, style = MaterialTheme.typography.bodyMedium, color = Color.DarkGray)
+        }
+    }
+}
+
+// --- PREVIEWS (FOR FAST ITERATION) ---
+// Use the "Split" or "Design" view in Android Studio to see these update in real-time.
+
+@Preview(showBackground = true, name = "Gali Mode (Street)", heightDp = 800)
+@Composable
+fun PreviewGali() {
+    val dummyLesson = LessonRepository.getLessons().first()
+    MaterialTheme(colorScheme = StreetPalette) {
+        Surface {
+           StreetView(dummyLesson.street, null) {}
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Leela Mode (Court)", heightDp = 800)
+@Composable
+fun PreviewLeela() {
+    val dummyLesson = LessonRepository.getLessons().first()
+    MaterialTheme(colorScheme = CourtPalette) {
+        Surface(color = CourtPalette.background) {
+           CourtView(dummyLesson.court, null) {}
         }
     }
 }
