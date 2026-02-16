@@ -135,8 +135,10 @@ fun HomeScreen(onLessonClick: (Lesson) -> Unit) {
                     Image(
                         painter = androidx.compose.ui.res.painterResource(R.drawable.ras_logo_header),
                         contentDescription = "RAS",
-                        modifier = Modifier.height(40.dp),
-                        contentScale = ContentScale.FillHeight
+                        modifier = Modifier
+                            .height(64.dp) // Taller to ensure it fills
+                            .fillMaxWidth(), // Stretch width
+                        contentScale = ContentScale.Crop // CROP is key to removing borders
                     )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
