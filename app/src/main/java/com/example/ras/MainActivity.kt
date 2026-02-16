@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
@@ -287,12 +288,19 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
             }
         ) { padding ->
             // Smooth content switch (stable API)
+            val leelaBg = remember {
+                Brush.verticalGradient(
+                    colors = listOf(Color(0xFFFFFDE7), Color(0xFFFFECB3))
+                )
+            }
+            val bgBrush = if (selectedTab == 1) leelaBg else SolidColor(animatedBgColor)
+
             Crossfade(
                 targetState = selectedTab,
                 animationSpec = tween(350),
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(animatedBgColor)
+                    .background(bgBrush)
                     .padding(padding)
             ) { tab ->
                 if (tab == 0) {
@@ -422,9 +430,10 @@ fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit
 
         item {
             ClayCard(
-                backgroundColor = Color.White, // Pure White Card
+                backgroundColor = Color.White.copy(alpha = 0.88f),
                 shape = SharedShape,
-                elevation = 8.dp // Force elevation to show "Clay" effect
+                elevation = 10.dp,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f))
             ) {
                 Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     section.poemLines.forEach { line ->
@@ -441,10 +450,14 @@ fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit
             }
         }
 
-        item { SectionDivider(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)) }
+        item { LeelaDivider() }
         
         item {
-            ClayCard(elevation = 2.dp) {
+            ClayCard(
+                elevation = 3.dp,
+                backgroundColor = Color.White.copy(alpha = 0.82f),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.18f))
+            ) {
                 Text(
                     section.analysis,
                     style = MaterialTheme.typography.bodyLarge,
@@ -455,7 +468,7 @@ fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit
             }
         }
 
-        item { SectionDivider(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)) }
+        item { LeelaDivider() }
         item { SectionTitle("Lexicon", color = MaterialTheme.colorScheme.primary) }
 
         items(section.wordBreakdown) { word ->
@@ -517,6 +530,29 @@ fun SectionDivider(color: Color = Color.LightGray.copy(alpha = 0.2f)) {
 }
 
 @Composable
+fun LeelaDivider() {
+    val gold = MaterialTheme.colorScheme.primary
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 18.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Divider(modifier = Modifier.weight(1f), color = gold.copy(alpha = 0.25f))
+        Spacer(modifier = Modifier.width(10.dp))
+        Surface(
+            shape = CircleShape,
+            color = gold.copy(alpha = 0.15f),
+            border = BorderStroke(1.dp, gold.copy(alpha = 0.35f))
+        ) {
+            Box(modifier = Modifier.size(10.dp))
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+        Divider(modifier = Modifier.weight(1f), color = gold.copy(alpha = 0.25f))
+    }
+}
+
+@Composable
 fun GrammarCard(grammar: GrammarPoint) {
     ClayCard(
         modifier = Modifier.fillMaxWidth(),
@@ -541,6 +577,7 @@ fun ClayCard(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     elevation: androidx.compose.ui.unit.Dp = 4.dp,
     shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(24.dp),
+    border: BorderStroke? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(
@@ -551,7 +588,7 @@ fun ClayCard(
         shape = shape,
         color = backgroundColor,
         shadowElevation = elevation,
-        border = if (elevation > 0.dp) null else BorderStroke(1.dp, Color(0x33000000)) // Add a subtle border if flat
+        border = border ?: if (elevation > 0.dp) null else BorderStroke(1.dp, Color(0x33000000))
     ) {
         Column(modifier = Modifier.padding(16.dp), content = content)
     }
