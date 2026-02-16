@@ -77,14 +77,14 @@ val StreetPalette = lightColorScheme(
     onSurface = Color(0xFF1B1B1B)
 )
 
-val CourtPalette = lightColorScheme(
-    primary = Color(0xFFBF360C),    // Burnt Sienna (Stronger)
-    secondary = Color(0xFF004D40),  // Deep Teal
-    tertiary = Color(0xFF880E4F),   
-    background = Color(0xFFEFEBE9), // Grayish Brown (Raw Clay)
-    surface = Color(0xFFFFF8E1),    // Creamy Card
-    onSurface = Color(0xFF3E2723),  // Dark Brown
-    onPrimary = Color.White
+val CourtPalette = darkColorScheme( // Revert to Dark Scheme for the Dark Background
+    primary = Color(0xFFFFD700),    // Gold
+    secondary = Color(0xFFD4AF37),  // Metallic Gold
+    tertiary = Color(0xFF8D6E63),   // Bronze
+    background = Color.Transparent, // Let the image show
+    surface = Color(0x1AFFFFFF),    // Glassy White (10%)
+    onSurface = Color(0xFFFFECB3),  // Pale Gold Text
+    onPrimary = Color.Black
 )
 
 @Composable
@@ -237,25 +237,21 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
     MaterialTheme(colorScheme = targetColors) {
         // --- Full Screen Background (Global) ---
         Box(modifier = Modifier.fillMaxSize()) {
-            // 1. Sandstone Texture (Base) - Force fully opaque
-            Image(
-                painter = androidx.compose.ui.res.painterResource(R.drawable.bg_sandstone),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-
-            // 2. Leela-specific Ornament (Mandala Header)
             if (selectedTab == 1) {
+                // Leela (Court) - User provided Dark Mandala Background
                 Image(
-                    painter = androidx.compose.ui.res.painterResource(R.drawable.mandala_header),
+                    painter = androidx.compose.ui.res.painterResource(R.drawable.bg_leela_combined),
                     contentDescription = null,
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.TopCenter)
-                        .offset(y = (-20).dp) // Lower it down so it's visible
-                        .alpha(0.6f) // Increase visibility significantly
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                // Gali (Street) - Sandstone Light
+                Image(
+                    painter = androidx.compose.ui.res.painterResource(R.drawable.bg_sandstone),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
                 )
             }
 
@@ -351,7 +347,7 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
                 if (tab == 0) {
                     StreetView(lesson.street, activeAudioId, ::playAudio)
                 } else {
-                    CourtView(lesson.court, activeAudioId, ::playAudio)
+                    CourtView(lesson.court, activeAudioId, ::playAudio, isDark = true)
                 }
             }
         }
@@ -460,7 +456,7 @@ fun VocabItemRow(vocab: VocabItem, isPlaying: Boolean, onPlay: () -> Unit) {
 // ---------------- COURT UI (Elegant, Serif, Deep) ----------------
 
 @Composable
-fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit) {
+fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit, isDark: Boolean = false) {
     LazyColumn(contentPadding = PaddingValues(bottom = 100.dp, top = 16.dp, start = 24.dp, end = 24.dp)) {
         item {
             // Shared DNA: Same structure as Street, but Serif font and gold color
@@ -476,10 +472,10 @@ fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit
 
         item {
             ClayCard(
-                backgroundColor = Color.White.copy(alpha = 0.88f),
+                backgroundColor = if (isDark) Color(0x1A000000) else Color.White.copy(alpha = 0.88f), // Darker glass for Leela
                 shape = SharedShape,
                 elevation = 10.dp,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f))
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
             ) {
                 Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     section.poemLines.forEach { line ->
@@ -501,8 +497,8 @@ fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit
         item {
             ClayCard(
                 elevation = 3.dp,
-                backgroundColor = Color.White.copy(alpha = 0.82f),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.18f))
+                backgroundColor = if (isDark) Color(0x0DFFFFFF) else Color.White.copy(alpha = 0.82f), // Very subtle glass for Leela
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
             ) {
                 Text(
                     section.analysis,
@@ -518,19 +514,19 @@ fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit
         item { SectionTitle("Lexicon", color = MaterialTheme.colorScheme.primary) }
 
         items(section.wordBreakdown) { word ->
-            CourtLexiconItem(word, activeId == word.id) { onPlay(word.id) }
+            CourtLexiconItem(word, activeId == word.id, { onPlay(word.id) }, isDark)
         }
     }
 }
 
 @Composable
-fun CourtLexiconItem(word: WordAnalysis, isPlaying: Boolean, onPlay: () -> Unit) {
+fun CourtLexiconItem(word: WordAnalysis, isPlaying: Boolean, onPlay: () -> Unit, isDark: Boolean = false) {
     val activeColor = MaterialTheme.colorScheme.primary
     
     ClayCard(
         modifier = Modifier.fillMaxWidth().clickable { onPlay() },
         elevation = if (isPlaying) 6.dp else 2.dp,
-        backgroundColor = if (isPlaying) activeColor.copy(alpha = 0.1f) else MaterialTheme.colorScheme.surface
+        backgroundColor = if (isPlaying) activeColor.copy(alpha = 0.1f) else (if (isDark) Color(0x0DFFFFFF) else MaterialTheme.colorScheme.surface)
     ) {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -584,17 +580,17 @@ fun LeelaDivider() {
             .padding(vertical = 18.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Divider(modifier = Modifier.weight(1f), color = gold.copy(alpha = 0.25f))
+        Divider(modifier = Modifier.weight(1f), color = gold.copy(alpha = 0.5f)) // Brighter line
         Spacer(modifier = Modifier.width(10.dp))
         Surface(
             shape = CircleShape,
-            color = gold.copy(alpha = 0.15f),
-            border = BorderStroke(1.dp, gold.copy(alpha = 0.35f))
+            color = Color.Black.copy(alpha = 0.3f), // Darker center
+            border = BorderStroke(1.dp, gold)
         ) {
-            Box(modifier = Modifier.size(10.dp))
+            Box(modifier = Modifier.size(8.dp))
         }
         Spacer(modifier = Modifier.width(10.dp))
-        Divider(modifier = Modifier.weight(1f), color = gold.copy(alpha = 0.25f))
+        Divider(modifier = Modifier.weight(1f), color = gold.copy(alpha = 0.5f))
     }
 }
 
@@ -657,8 +653,8 @@ fun PreviewGali() {
 fun PreviewLeela() {
     val dummyLesson = LessonRepository.getLessons().first()
     MaterialTheme(colorScheme = CourtPalette) {
-        Surface(color = CourtPalette.background) {
-           CourtView(dummyLesson.court, null) {}
+        Surface(color = Color.Black) { // Preview with dark background
+           CourtView(dummyLesson.court, null, {}, isDark = true)
         }
     }
 }
