@@ -472,7 +472,7 @@ fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit
 
         item {
             ClayCard(
-                backgroundColor = if (isDark) Color(0x1A000000) else Color.White.copy(alpha = 0.88f), // Darker glass for Leela
+                backgroundColor = if (isDark) Color.Black.copy(alpha = 0.85f) else Color.White.copy(alpha = 0.88f), // 85% Black to block busy background
                 shape = SharedShape,
                 elevation = 10.dp,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
@@ -497,7 +497,7 @@ fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit
         item {
             ClayCard(
                 elevation = 3.dp,
-                backgroundColor = if (isDark) Color(0x0DFFFFFF) else Color.White.copy(alpha = 0.82f), // Very subtle glass for Leela
+                backgroundColor = if (isDark) Color.Black.copy(alpha = 0.75f) else Color.White.copy(alpha = 0.82f), // 75% Black for analysis card
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
             ) {
                 Text(
@@ -526,7 +526,7 @@ fun CourtLexiconItem(word: WordAnalysis, isPlaying: Boolean, onPlay: () -> Unit,
     ClayCard(
         modifier = Modifier.fillMaxWidth().clickable { onPlay() },
         elevation = if (isPlaying) 6.dp else 2.dp,
-        backgroundColor = if (isPlaying) activeColor.copy(alpha = 0.1f) else (if (isDark) Color(0x0DFFFFFF) else MaterialTheme.colorScheme.surface)
+        backgroundColor = if (isPlaying) activeColor.copy(alpha = 0.1f) else (if (isDark) Color.Black.copy(alpha = 0.7f) else MaterialTheme.colorScheme.surface)
     ) {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
