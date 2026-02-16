@@ -19,17 +19,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.ras.R
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,11 +42,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import com.example.ras.R
 
 val EczarFont = FontFamily(
     Font(R.font.eczar_variable, FontWeight.Normal),
@@ -71,12 +69,14 @@ val StreetPalette = lightColorScheme(
     onSurface = Color(0xFF1B1B1B)
 )
 
-val CourtPalette = darkColorScheme(
-    primary = Color(0xFFFFD700), // Gold
-    secondary = Color(0xFF4A0E2E), // Deep Maroon
-    background = Color(0xFF1A0010), // Midnight
-    surface = Color(0xFF2C041C), // Velvet
-    onSurface = Color(0xFFE0E0E0)
+val CourtPalette = lightColorScheme( // Claymorphism: Light base for court too
+    primary = Color(0xFFE65100),    // Deep Saffron
+    secondary = Color(0xFF00695C),  // Peacock Teal
+    tertiary = Color(0xFFD81B60),   // Rose
+    background = Color(0xFFFFF8E1), // Ivory
+    surface = Color(0xFFFFECB3),    // Pale Amber
+    onSurface = Color(0xFF3E2723),  // Dark Brown
+    onPrimary = Color.White
 )
 
 @Composable
@@ -142,11 +142,11 @@ fun HomeScreen(onLessonClick: (Lesson) -> Unit) {
                 )
             }
             items(lessons) { lesson ->
-                Card(
+                ClayCard(
                     modifier = Modifier.fillMaxWidth().clickable { onLessonClick(lesson) },
-                    elevation = CardDefaults.cardElevation(2.dp),
+                    elevation = 2.dp,
                     shape = SharedShape,
-                    colors = CardDefaults.cardColors(containerColor = Color.White) // Neutral card
+                    backgroundColor = Color.White // Neutral card
                 ) {
                     Row(
                         modifier = Modifier.padding(20.dp),
