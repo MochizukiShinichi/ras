@@ -131,9 +131,20 @@ fun HomeScreen(onLessonClick: (Lesson) -> Unit) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("RAS", fontWeight = FontWeight.Bold, letterSpacing = 2.sp) }
+                title = { 
+                    Image(
+                        painter = androidx.compose.ui.res.painterResource(R.drawable.ras_logo_header),
+                        contentDescription = "RAS",
+                        modifier = Modifier.height(40.dp),
+                        contentScale = ContentScale.FillHeight
+                    )
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.Transparent
+                )
             )
-        }
+        },
+        containerColor = Color.Transparent
     ) { padding ->
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
