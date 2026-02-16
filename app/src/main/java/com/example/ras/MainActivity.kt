@@ -449,10 +449,12 @@ fun StreetView(section: StreetSection, activeId: String?, onPlay: (String) -> Un
 
 @Composable
 fun StreetBubble(line: DialogueLine, isPlaying: Boolean, onPlay: () -> Unit) {
-    val isDriver = line.speaker == "Auto Driver"
-    val align = if (isDriver) Alignment.Start else Alignment.End
+    // Left side = service/local speaker; Right side = learner
+    val leftSpeakers = setOf("Auto Driver", "Local", "Server", "Shopkeeper", "Host", "Chemist", "Official")
+    val isLeft = line.speaker in leftSpeakers
+    val align = if (isLeft) Alignment.Start else Alignment.End
     // Shared DNA: Same typography scale, just different color/shape nuances
-    val containerColor = if (isDriver) Color.White else MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+    val containerColor = if (isLeft) Color.White else MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
     val borderColor = if (isPlaying) MaterialTheme.colorScheme.primary else Color.Transparent
     
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp), horizontalAlignment = align) {
@@ -461,7 +463,7 @@ fun StreetBubble(line: DialogueLine, isPlaying: Boolean, onPlay: () -> Unit) {
             modifier = Modifier.widthIn(max = 300.dp).clickable { onPlay() },
             backgroundColor = containerColor,
             elevation = if (isPlaying) 8.dp else 2.dp,
-            shape = if (isDriver) RoundedCornerShape(4.dp, 16.dp, 16.dp, 16.dp) else RoundedCornerShape(16.dp, 4.dp, 16.dp, 16.dp)
+            shape = if (isLeft) RoundedCornerShape(4.dp, 16.dp, 16.dp, 16.dp) else RoundedCornerShape(16.dp, 4.dp, 16.dp, 16.dp)
         ) {
             Column {
                 Text(line.hindi, style = MaterialTheme.typography.bodyLarge, color = Color.Black)
