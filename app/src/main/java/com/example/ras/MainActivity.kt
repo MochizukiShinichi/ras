@@ -61,18 +61,23 @@ val LatoFont = FontFamily(
     Font(R.font.lato_bold, FontWeight.Bold)
 )
 
-// --- SHARED DESIGN TOKENS ---
-// We define a shared design system to bridge the two worlds.
-// Commonality: Typography scale, Corner Radii (gentle), Iconography style.
-
-val SharedShape = RoundedCornerShape(12.dp)
+// --- DESIGN TOKENS ---
+val GaliShape = RoundedCornerShape(14.dp) // Refined for Gali
+val LeelaShape = RoundedCornerShape(24.dp) // Organic for Leela
 val SharedPadding = 16.dp
+
+// Colors
+val GaliHeaderBg = Color(0xFFF4F1EA)
+val GaliHeaderDivider = Color(0xFFE5DED2)
+val GaliTitleColor = Color(0xFF3E5E4B)
+val GaliSectionHeaderColor = Color(0xFF6F6A60)
+val GaliPlayBtnBg = Color(0xFFEFEAE0)
 
 // Theme Palette Definitions
 val StreetPalette = lightColorScheme(
-    primary = Color(0xFF2E7D32), // Forest Green
-    secondary = Color(0xFFE0F2E9), // Minty
-    background = Color(0xFFFDFCF0), // Cream
+    primary = Color(0xFF2E7D32),
+    secondary = Color(0xFFE0F2E9),
+    background = Color(0xFFFDFCF0),
     surface = Color.White,
     onSurface = Color(0xFF1B1B1B)
 )
@@ -165,7 +170,7 @@ fun HomeScreen(onLessonClick: (Lesson) -> Unit) {
                 ClayCard(
                     modifier = Modifier.fillMaxWidth().clickable { onLessonClick(lesson) },
                     elevation = 2.dp,
-                    shape = SharedShape,
+                    shape = GaliShape, // Updated to GaliShape
                     backgroundColor = Color.White // Neutral card
                 ) {
                     Row(
@@ -269,36 +274,41 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
 
             // 3. Content Scaffold
             Scaffold(
-                containerColor = Color.Transparent, // IMPORTANT: Must be transparent
+                containerColor = Color.Transparent, 
                 topBar = {
-                // Unified Header Design: Minimalist but changes color
-                TopAppBar(
-                    title = { 
-                        Text(
-                            text = if (selectedTab == 0) "GALI" else "LEELA",
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp,
-                            style = MaterialTheme.typography.titleMedium
-                        ) 
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onBack) {
-                            Icon(Icons.Default.ArrowBack, "Back")
+                    if (selectedTab == 1) {
+                        // Leela Header (Transparent)
+                        CenterAlignedTopAppBar(
+                            title = { 
+                                Text("रस", fontWeight = FontWeight.Bold, fontSize = 32.sp, fontFamily = EczarFont, color = Color(0xFFFFECB3))
+                            },
+                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
+                            navigationIcon = {
+                                IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, "Back", tint = Color(0xFFFFECB3)) }
+                            }
+                        )
+                    } else {
+                        // Gali Header (Solid Beige + Divider)
+                        Column {
+                            CenterAlignedTopAppBar(
+                                title = { 
+                                    Text("GALI", fontWeight = FontWeight.SemiBold, fontSize = 18.sp, letterSpacing = 2.sp, color = GaliTitleColor)
+                                },
+                                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = GaliHeaderBg),
+                                navigationIcon = {
+                                    IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, "Back", tint = GaliTitleColor) }
+                                }
+                            )
+                            Divider(color = GaliHeaderDivider, thickness = 1.dp)
                         }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = animatedBgColor, // Seamless header
-                        titleContentColor = animatedPrimaryColor,
-                        navigationIconContentColor = animatedPrimaryColor
-                    )
-                )
-            },
+                    }
+                },
             bottomBar = {
                 // Floating Tab Switcher (Custom) - Lowered position
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp), // Reduced from 24dp to 16dp
+                        .padding(bottom = 16.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     ClayCard(
@@ -313,8 +323,12 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
                                 painter = androidx.compose.ui.res.painterResource(R.drawable.terracotta_texture),
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,
-                                modifier = Modifier.matchParentSize().alpha(0.95f)
+                                modifier = Modifier.matchParentSize().alpha(0.95f),
+                                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.Black.copy(alpha=0.1f), blendMode = BlendMode.Darken) // Darken by 10%
                             )
+                            // Top border
+                            Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color(0xFF4A2B1E).copy(alpha=0.5f)).align(Alignment.TopCenter))
+                            
                             Row(
                                 verticalAlignment = Alignment.CenterVertically, 
                                 modifier = Modifier.padding(horizontal = 8.dp).align(Alignment.Center)
@@ -323,7 +337,8 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
                                     text = "Gali", 
                                     icon = Icons.Default.DirectionsCar, 
                                     isSelected = selectedTab == 0,
-                                    selectedColor = StreetPalette.primary
+                                    selectedColor = Color.White,
+                                    unselectedColor = Color(0xFF4A2B1E)
                                 ) { selectedTab = 0 }
                                 
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -332,7 +347,8 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
                                     text = "Leela", 
                                     icon = Icons.Default.TempleHindu, 
                                     isSelected = selectedTab == 1,
-                                    selectedColor = CourtPalette.primary
+                                    selectedColor = Color.White,
+                                    unselectedColor = Color(0xFF4A2B1E)
                                 ) { selectedTab = 1 }
                             }
                         }
@@ -368,16 +384,16 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
 }
 
 @Composable
-fun TabButton(text: String, icon: androidx.compose.ui.graphics.vector.ImageVector, isSelected: Boolean, selectedColor: Color, onClick: () -> Unit) {
-    val bgColor by animateColorAsState(if (isSelected) Color.White else Color.Transparent)
-    val contentColor by animateColorAsState(if (isSelected) selectedColor else Color.White)
+fun TabButton(text: String, icon: androidx.compose.ui.graphics.vector.ImageVector, isSelected: Boolean, selectedColor: Color, unselectedColor: Color = Color.LightGray, onClick: () -> Unit) {
+    val bgColor by animateColorAsState(if (isSelected) Color.White.copy(alpha=0.1f) else Color.Transparent)
+    val contentColor by animateColorAsState(if (isSelected) selectedColor else unselectedColor)
     
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(50))
             .background(bgColor)
             .clickable { onClick() }
-            .padding(vertical = 10.dp, horizontal = 16.dp),
+            .padding(vertical = 12.dp, horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(icon, null, tint = contentColor, modifier = Modifier.size(18.dp))
@@ -484,8 +500,8 @@ fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit
 
         item {
             ClayCard(
-                backgroundColor = if (isDark) Color.Black.copy(alpha = 0.85f) else Color.White.copy(alpha = 0.88f), // 85% Black to block busy background
-                shape = SharedShape,
+                backgroundColor = if (isDark) Color.Black.copy(alpha = 0.85f) else Color.White.copy(alpha = 0.88f),
+                shape = LeelaShape, // Update to LeelaShape
                 elevation = 10.dp,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
             ) {
@@ -610,7 +626,7 @@ fun LeelaDivider() {
 fun GrammarCard(grammar: GrammarPoint) {
     ClayCard(
         modifier = Modifier.fillMaxWidth(),
-        shape = SharedShape,
+        shape = GaliShape, // Update to GaliShape
         backgroundColor = Color.White,
         elevation = 2.dp
     ) {
