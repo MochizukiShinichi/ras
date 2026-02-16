@@ -33,6 +33,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.ras.R
 
 class MainActivity : ComponentActivity() {
@@ -228,8 +235,33 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
     val animatedPrimaryColor by animateColorAsState(targetColors.primary, animationSpec = tween(500))
     
     MaterialTheme(colorScheme = targetColors) {
-        Scaffold(
-            topBar = {
+        // --- Full Screen Background (Global) ---
+        Box(modifier = Modifier.fillMaxSize()) {
+            // 1. Sandstone Texture (Base)
+            Image(
+                painter = androidx.compose.ui.res.painterResource(R.drawable.bg_sandstone),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+
+            // 2. Leela-specific Ornament (Mandala Header)
+            if (selectedTab == 1) {
+                Image(
+                    painter = androidx.compose.ui.res.painterResource(R.drawable.mandala_header),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter)
+                        .offset(y = (-80).dp) // Peeking from top
+                        .alpha(0.2f)
+                )
+            }
+
+            Scaffold(
+                containerColor = Color.Transparent, // Let background show
+                topBar = {
                 // Unified Header Design: Minimalist but changes color
                 TopAppBar(
                     title = { 
@@ -262,26 +294,38 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
                 ) {
                     ClayCard(
                         shape = RoundedCornerShape(50),
-                        backgroundColor = Color.Black.copy(alpha = 0.8f),
+                        backgroundColor = Color.Transparent,
                         elevation = 8.dp,
-                        modifier = Modifier.height(56.dp)
+                        modifier = Modifier.height(56.dp),
+                        contentPadding = PaddingValues(0.dp)
                     ) {
-                         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 8.dp)) {
-                            TabButton(
-                                text = "Gali", 
-                                icon = Icons.Default.DirectionsCar, 
-                                isSelected = selectedTab == 0,
-                                selectedColor = StreetPalette.primary
-                            ) { selectedTab = 0 }
-                            
-                            Spacer(modifier = Modifier.width(8.dp))
-                            
-                            TabButton(
-                                text = "Leela", 
-                                icon = Icons.Default.TempleHindu, 
-                                isSelected = selectedTab == 1,
-                                selectedColor = CourtPalette.primary
-                            ) { selectedTab = 1 }
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            Image(
+                                painter = androidx.compose.ui.res.painterResource(R.drawable.terracotta_texture),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.matchParentSize().alpha(0.95f)
+                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically, 
+                                modifier = Modifier.padding(horizontal = 8.dp).align(Alignment.Center)
+                            ) {
+                                TabButton(
+                                    text = "Gali", 
+                                    icon = Icons.Default.DirectionsCar, 
+                                    isSelected = selectedTab == 0,
+                                    selectedColor = StreetPalette.primary
+                                ) { selectedTab = 0 }
+                                
+                                Spacer(modifier = Modifier.width(8.dp))
+                                
+                                TabButton(
+                                    text = "Leela", 
+                                    icon = Icons.Default.TempleHindu, 
+                                    isSelected = selectedTab == 1,
+                                    selectedColor = CourtPalette.primary
+                                ) { selectedTab = 1 }
+                            }
                         }
                     }
                 }
@@ -309,6 +353,7 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
                     CourtView(lesson.court, activeAudioId, ::playAudio)
                 }
             }
+        }
         }
     }
 }
@@ -578,6 +623,7 @@ fun ClayCard(
     elevation: androidx.compose.ui.unit.Dp = 4.dp,
     shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(24.dp),
     border: BorderStroke? = null,
+    contentPadding: PaddingValues = PaddingValues(16.dp),
     content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(
@@ -590,7 +636,7 @@ fun ClayCard(
         shadowElevation = elevation,
         border = border ?: if (elevation > 0.dp) null else BorderStroke(1.dp, Color(0x33000000))
     ) {
-        Column(modifier = Modifier.padding(16.dp), content = content)
+        Column(modifier = Modifier.padding(contentPadding), content = content)
     }
 }
 
