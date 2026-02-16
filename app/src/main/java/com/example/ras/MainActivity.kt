@@ -40,6 +40,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import com.example.ras.R
+
+val EczarFont = FontFamily(
+    Font(R.font.eczar_variable, FontWeight.Normal),
+    Font(R.font.eczar_variable, FontWeight.Bold)
+)
+
+val LatoFont = FontFamily(
+    Font(R.font.lato_regular, FontWeight.Normal),
+    Font(R.font.lato_bold, FontWeight.Bold)
+)
+
 // --- SHARED DESIGN TOKENS ---
 // We define a shared design system to bridge the two worlds.
 // Commonality: Typography scale, Corner Radii (gentle), Iconography style.
@@ -68,7 +83,17 @@ val CourtPalette = darkColorScheme(
 fun RasApp() {
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Home) }
 
-    MaterialTheme {
+    MaterialTheme(
+        typography = Typography(
+            headlineMedium = androidx.compose.material3.Typography().headlineMedium.copy(fontFamily = EczarFont),
+            headlineLarge = androidx.compose.material3.Typography().headlineLarge.copy(fontFamily = EczarFont),
+            titleLarge = androidx.compose.material3.Typography().titleLarge.copy(fontFamily = EczarFont),
+            titleMedium = androidx.compose.material3.Typography().titleMedium.copy(fontFamily = LatoFont),
+            bodyLarge = androidx.compose.material3.Typography().bodyLarge.copy(fontFamily = LatoFont),
+            bodyMedium = androidx.compose.material3.Typography().bodyMedium.copy(fontFamily = LatoFont),
+            labelMedium = androidx.compose.material3.Typography().labelMedium.copy(fontFamily = LatoFont)
+        )
+    ) {
         Surface(modifier = Modifier.fillMaxSize()) {
             Crossfade(targetState = currentScreen, animationSpec = tween(500)) { screen ->
                 when (screen) {
@@ -502,6 +527,27 @@ fun GrammarCard(grammar: GrammarPoint) {
 
 // --- PREVIEWS (FOR FAST ITERATION) ---
 // Use the "Split" or "Design" view in Android Studio to see these update in real-time.
+
+@Composable
+fun ClayCard(
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    elevation: androidx.compose.ui.unit.Dp = 4.dp,
+    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(24.dp),
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Surface(
+        modifier = modifier
+            .padding(bottom = 6.dp) // Space for shadow offset
+            .shadow(elevation, shape, clip = false)
+            .offset(y = 2.dp), // Physical offset
+        shape = shape,
+        color = backgroundColor,
+        shadowElevation = elevation
+    ) {
+        Column(modifier = Modifier.padding(16.dp), content = content)
+    }
+}
 
 @Preview(showBackground = true, name = "Gali Mode (Street)", heightDp = 800)
 @Composable
