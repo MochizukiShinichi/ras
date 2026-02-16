@@ -345,7 +345,7 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
                 animationSpec = tween(350),
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(bgBrush)
+                    // .background(bgBrush) REMOVED: Handled by parent Box
                     .padding(padding)
             ) { tab ->
                 if (tab == 0) {
