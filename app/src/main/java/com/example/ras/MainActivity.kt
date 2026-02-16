@@ -237,7 +237,7 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
     MaterialTheme(colorScheme = targetColors) {
         // --- Full Screen Background (Global) ---
         Box(modifier = Modifier.fillMaxSize()) {
-            // 1. Sandstone Texture (Base)
+            // 1. Sandstone Texture (Base) - Force fully opaque
             Image(
                 painter = androidx.compose.ui.res.painterResource(R.drawable.bg_sandstone),
                 contentDescription = null,
@@ -254,13 +254,14 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.TopCenter)
-                        .offset(y = (-80).dp) // Peeking from top
-                        .alpha(0.2f)
+                        .offset(y = (-20).dp) // Lower it down so it's visible
+                        .alpha(0.6f) // Increase visibility significantly
                 )
             }
 
+            // 3. Content Scaffold
             Scaffold(
-                containerColor = Color.Transparent, // Let background show
+                containerColor = Color.Transparent, // IMPORTANT: Must be transparent
                 topBar = {
                 // Unified Header Design: Minimalist but changes color
                 TopAppBar(
@@ -285,11 +286,11 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
                 )
             },
             bottomBar = {
-                // Floating Tab Switcher (Custom) instead of standard NavBar for coherence
+                // Floating Tab Switcher (Custom) - Lowered position
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 24.dp),
+                        .padding(bottom = 16.dp), // Reduced from 24dp to 16dp
                     contentAlignment = Alignment.Center
                 ) {
                     ClayCard(
