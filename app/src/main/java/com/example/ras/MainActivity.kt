@@ -543,7 +543,7 @@ fun ClayCard(
     shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(24.dp),
     content: @Composable ColumnScope.() -> Unit
 ) {
-    ClayCard(
+    Surface(
         modifier = modifier
             .padding(bottom = 6.dp)
             .shadow(elevation, shape, clip = false)
