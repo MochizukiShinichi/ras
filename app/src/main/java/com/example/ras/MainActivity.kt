@@ -334,7 +334,8 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
                                 modifier = Modifier.padding(horizontal = 8.dp).align(Alignment.Center)
                             ) {
                                 TabButton(
-                                    text = "Gali", 
+                                    text = "Gali",
+                                    subText = "गली",
                                     icon = Icons.Default.DirectionsCar, 
                                     isSelected = selectedTab == 0,
                                     selectedColor = Color.White,
@@ -344,7 +345,8 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
                                 Spacer(modifier = Modifier.width(8.dp))
                                 
                                 TabButton(
-                                    text = "Leela", 
+                                    text = "Leela",
+                                    subText = "लीला",
                                     icon = Icons.Default.TempleHindu, 
                                     isSelected = selectedTab == 1,
                                     selectedColor = Color.White,
@@ -384,7 +386,7 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
 }
 
 @Composable
-fun TabButton(text: String, icon: androidx.compose.ui.graphics.vector.ImageVector, isSelected: Boolean, selectedColor: Color, unselectedColor: Color = Color.LightGray, onClick: () -> Unit) {
+fun TabButton(text: String, subText: String, icon: androidx.compose.ui.graphics.vector.ImageVector, isSelected: Boolean, selectedColor: Color, unselectedColor: Color = Color.LightGray, onClick: () -> Unit) {
     val bgColor by animateColorAsState(if (isSelected) Color.White.copy(alpha=0.1f) else Color.Transparent)
     val contentColor by animateColorAsState(if (isSelected) selectedColor else unselectedColor)
     
@@ -393,13 +395,25 @@ fun TabButton(text: String, icon: androidx.compose.ui.graphics.vector.ImageVecto
             .clip(RoundedCornerShape(50))
             .background(bgColor)
             .clickable { onClick() }
-            .padding(vertical = 12.dp, horizontal = 20.dp),
+            .padding(vertical = 8.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, null, tint = contentColor, modifier = Modifier.size(18.dp))
-        if (isSelected) {
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text, color = contentColor, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
+        Icon(icon, null, tint = contentColor, modifier = Modifier.size(20.dp))
+        Spacer(modifier = Modifier.width(8.dp))
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text, 
+                color = contentColor, 
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal, 
+                style = MaterialTheme.typography.labelLarge
+            )
+            Text(
+                subText, 
+                color = contentColor.copy(alpha = 0.8f), 
+                fontWeight = FontWeight.Normal, 
+                style = MaterialTheme.typography.labelSmall,
+                fontFamily = EczarFont
+            )
         }
     }
 }
