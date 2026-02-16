@@ -259,13 +259,13 @@ fun LessonDetailScreen(lesson: Lesson, onBack: () -> Unit) {
                         .padding(bottom = 24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Surface(
+                    ClayCard(
                         shape = RoundedCornerShape(50),
-                        color = Color.Black.copy(alpha = 0.8f),
-                        contentColor = Color.White,
+                        backgroundColor = Color.Black.copy(alpha = 0.8f),
+                        elevation = 8.dp,
                         modifier = Modifier.height(56.dp)
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 8.dp)) {
+                         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 8.dp)) {
                             TabButton(
                                 text = "Gali", 
                                 icon = Icons.Default.DirectionsCar, 
@@ -365,14 +365,13 @@ fun StreetBubble(line: DialogueLine, isPlaying: Boolean, onPlay: () -> Unit) {
     
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp), horizontalAlignment = align) {
         Text(line.speaker, style = MaterialTheme.typography.labelSmall, color = Color.Gray, modifier = Modifier.padding(horizontal = 8.dp))
-        Surface(
-            shape = if (isDriver) RoundedCornerShape(4.dp, 16.dp, 16.dp, 16.dp) else RoundedCornerShape(16.dp, 4.dp, 16.dp, 16.dp),
-            color = containerColor,
-            border = BorderStroke(1.dp, if (isPlaying) borderColor else Color.Transparent),
+        ClayCard(
             modifier = Modifier.widthIn(max = 300.dp).clickable { onPlay() },
-            shadowElevation = 1.dp
+            backgroundColor = containerColor,
+            elevation = if (isPlaying) 8.dp else 2.dp,
+            shape = if (isDriver) RoundedCornerShape(4.dp, 16.dp, 16.dp, 16.dp) else RoundedCornerShape(16.dp, 4.dp, 16.dp, 16.dp)
         ) {
-            Column(modifier = Modifier.padding(12.dp)) {
+            Column {
                 Text(line.hindi, style = MaterialTheme.typography.bodyLarge, color = Color.Black)
                 Text(line.english, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
             }
@@ -382,26 +381,26 @@ fun StreetBubble(line: DialogueLine, isPlaying: Boolean, onPlay: () -> Unit) {
 
 @Composable
 fun VocabItemRow(vocab: VocabItem, isPlaying: Boolean, onPlay: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onPlay() }
-            .padding(vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
+    ClayCard(
+        modifier = Modifier.fillMaxWidth().clickable { onPlay() },
+        elevation = if (isPlaying) 6.dp else 2.dp,
+        backgroundColor = MaterialTheme.colorScheme.surface
     ) {
-        Icon(
-            if (isPlaying) Icons.Default.VolumeUp else Icons.Default.PlayCircleOutline, 
-            contentDescription = "Play",
-            tint = if (isPlaying) MaterialTheme.colorScheme.primary else Color.LightGray,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Column {
-            Text(vocab.word, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-            Text(vocab.meaning, style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                if (isPlaying) Icons.Default.VolumeUp else Icons.Default.PlayCircleOutline, 
+                contentDescription = "Play",
+                tint = if (isPlaying) MaterialTheme.colorScheme.primary else Color.LightGray,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text(vocab.word, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                Text(vocab.meaning, style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+            }
         }
     }
-    Divider(color = Color.LightGray.copy(alpha = 0.2f))
+    Spacer(modifier = Modifier.height(12.dp))
 }
 
 // ---------------- COURT UI (Elegant, Serif, Deep) ----------------
@@ -422,12 +421,12 @@ fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit
         }
 
         item {
-            Card(
-                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f)),
+            ClayCard(
+                backgroundColor = Color.White.copy(alpha = 0.5f), // Glassy/Clay look
                 shape = SharedShape,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
+                elevation = 0.dp // Flat but textured
             ) {
-                Column(modifier = Modifier.padding(24.dp).fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     section.poemLines.forEach { line ->
                         Text(
                             text = line,
@@ -445,13 +444,15 @@ fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit
         item { SectionDivider(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)) }
         
         item {
-            Text(
-                section.analysis,
-                style = MaterialTheme.typography.bodyLarge,
-                fontFamily = FontFamily.Serif,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                lineHeight = 28.sp
-            )
+            ClayCard(elevation = 2.dp) {
+                Text(
+                    section.analysis,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontFamily = FontFamily.Serif,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                    lineHeight = 28.sp
+                )
+            }
         }
 
         item { SectionDivider(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)) }
@@ -467,28 +468,34 @@ fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit
 fun CourtLexiconItem(word: WordAnalysis, isPlaying: Boolean, onPlay: () -> Unit) {
     val activeColor = MaterialTheme.colorScheme.primary
     
-    Column(modifier = Modifier.fillMaxWidth().clickable { onPlay() }.padding(vertical = 12.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                word.word, 
-                style = MaterialTheme.typography.titleLarge, 
-                color = if (isPlaying) activeColor else MaterialTheme.colorScheme.onSurface,
-                fontFamily = FontFamily.Serif
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            if (isPlaying) Icon(Icons.Default.VolumeUp, null, tint = activeColor, modifier = Modifier.size(16.dp))
-        }
-        Spacer(modifier = Modifier.height(4.dp))
-        Row {
-            Text("Lit: ", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
-            Text(word.literal, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f), style = MaterialTheme.typography.bodySmall)
-        }
-        Row {
-            Text("Meta: ", color = activeColor.copy(alpha = 0.7f), style = MaterialTheme.typography.bodySmall)
-            Text(word.metaphor, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f), style = MaterialTheme.typography.bodySmall)
+    ClayCard(
+        modifier = Modifier.fillMaxWidth().clickable { onPlay() },
+        elevation = if (isPlaying) 6.dp else 2.dp,
+        backgroundColor = if (isPlaying) activeColor.copy(alpha = 0.1f) else MaterialTheme.colorScheme.surface
+    ) {
+        Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    word.word, 
+                    style = MaterialTheme.typography.titleLarge, 
+                    color = if (isPlaying) activeColor else MaterialTheme.colorScheme.onSurface,
+                    fontFamily = FontFamily.Serif
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                if (isPlaying) Icon(Icons.Default.VolumeUp, null, tint = activeColor, modifier = Modifier.size(16.dp))
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Row {
+                Text("Lit: ", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
+                Text(word.literal, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f), style = MaterialTheme.typography.bodySmall)
+            }
+            Row {
+                Text("Meta: ", color = activeColor.copy(alpha = 0.7f), style = MaterialTheme.typography.bodySmall)
+                Text(word.metaphor, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f), style = MaterialTheme.typography.bodySmall)
+            }
         }
     }
-    Divider(color = Color.White.copy(alpha = 0.1f))
+    Spacer(modifier = Modifier.height(12.dp))
 }
 
 // --- SHARED UTILS ---
@@ -511,13 +518,13 @@ fun SectionDivider(color: Color = Color.LightGray.copy(alpha = 0.2f)) {
 
 @Composable
 fun GrammarCard(grammar: GrammarPoint) {
-    Card(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+    ClayCard(
+        modifier = Modifier.fillMaxWidth(),
         shape = SharedShape,
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(1.dp)
+        backgroundColor = Color.White,
+        elevation = 2.dp
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column {
             Text(grammar.title, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(4.dp))
             Text(grammar.content, style = MaterialTheme.typography.bodyMedium, color = Color.DarkGray)
