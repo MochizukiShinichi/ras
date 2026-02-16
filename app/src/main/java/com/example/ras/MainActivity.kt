@@ -69,12 +69,12 @@ val StreetPalette = lightColorScheme(
     onSurface = Color(0xFF1B1B1B)
 )
 
-val CourtPalette = lightColorScheme( // Claymorphism: Light base for court too
-    primary = Color(0xFFE65100),    // Deep Saffron
-    secondary = Color(0xFF00695C),  // Peacock Teal
-    tertiary = Color(0xFFD81B60),   // Rose
-    background = Color(0xFFFFF8E1), // Ivory
-    surface = Color(0xFFFFECB3),    // Pale Amber
+val CourtPalette = lightColorScheme(
+    primary = Color(0xFFBF360C),    // Burnt Sienna (Stronger)
+    secondary = Color(0xFF004D40),  // Deep Teal
+    tertiary = Color(0xFF880E4F),   
+    background = Color(0xFFEFEBE9), // Grayish Brown (Raw Clay)
+    surface = Color(0xFFFFF8E1),    // Creamy Card
     onSurface = Color(0xFF3E2723),  // Dark Brown
     onPrimary = Color.White
 )
@@ -422,9 +422,9 @@ fun CourtView(section: CourtSection, activeId: String?, onPlay: (String) -> Unit
 
         item {
             ClayCard(
-                backgroundColor = Color.White.copy(alpha = 0.5f), // Glassy/Clay look
+                backgroundColor = Color.White, // Pure White Card
                 shape = SharedShape,
-                elevation = 0.dp // Flat but textured
+                elevation = 8.dp // Force elevation to show "Clay" effect
             ) {
                 Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     section.poemLines.forEach { line ->
@@ -543,14 +543,15 @@ fun ClayCard(
     shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(24.dp),
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Surface(
+    ClayCard(
         modifier = modifier
-            .padding(bottom = 6.dp) // Space for shadow offset
+            .padding(bottom = 6.dp)
             .shadow(elevation, shape, clip = false)
-            .offset(y = 2.dp), // Physical offset
+            .offset(y = if (elevation > 0.dp) 4.dp else 0.dp),
         shape = shape,
         color = backgroundColor,
-        shadowElevation = elevation
+        shadowElevation = elevation,
+        border = if (elevation > 0.dp) null else BorderStroke(1.dp, Color(0x33000000)) // Add a subtle border if flat
     ) {
         Column(modifier = Modifier.padding(16.dp), content = content)
     }
