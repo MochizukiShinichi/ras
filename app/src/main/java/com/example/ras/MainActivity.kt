@@ -132,13 +132,12 @@ fun HomeScreen(onLessonClick: (Lesson) -> Unit) {
         topBar = {
             CenterAlignedTopAppBar(
                 title = { 
-                    Image(
-                        painter = androidx.compose.ui.res.painterResource(R.drawable.ras_logo_header),
-                        contentDescription = "RAS",
-                        modifier = Modifier
-                            .height(64.dp) // Taller to ensure it fills
-                            .fillMaxWidth(), // Stretch width
-                        contentScale = ContentScale.Crop // CROP is key to removing borders
+                    Text(
+                        "रस", // Hindi for Ras
+                        fontWeight = FontWeight.Bold, 
+                        fontSize = 32.sp,
+                        fontFamily = EczarFont,
+                        color = Color(0xFF3E2723) // Dark Brown stone color
                     )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
